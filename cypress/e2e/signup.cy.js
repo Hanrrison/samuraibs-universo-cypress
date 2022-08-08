@@ -1,5 +1,5 @@
 import signup from '../support/pages/signup'
-import SignupPage from '../support/pages/signup'
+import signupPage from '../support/pages/signup'
 
 describe('Cadastro', function () {
 
@@ -20,14 +20,13 @@ describe('Cadastro', function () {
 
         it('deve cadastrar com sucesso', function () {
 
-            SignupPage.go()
-            SignupPage.form(user)
-            SignupPage.submit()
-            SignupPage.toast.shouldHaveText('Agora você se tornou um(a) Samurai, faça seu login para ver seus agendamentos!')
+            signupPage.go()
+            signupPage.form(user)
+            signupPage.submit()
+            signupPage.toast.shouldHaveText('Agora você se tornou um(a) Samurai, faça seu login para ver seus agendamentos!')
 
         })
     })
-
 
     context('quando o email já existe', function () {
         const user = {
@@ -38,28 +37,31 @@ describe('Cadastro', function () {
         }
 
         before(function () {
-
-            cy.task('removeUser', user.email)
-                .then(function (result) {
-                    console.log(result)
-                })
-
-            cy.request(
-                'POST',
-                'http://localhost:3333/users',
-                user
-            ).then(function (response) {
-                expect(response.status).to.eq(200)
-            })
+            cy.postUser(user)
         })
 
         it('não deve cadastrar o usuário', function () {
 
-            SignupPage.go()
-            SignupPage.form(user)
-            SignupPage.submit()
-            SignupPage.toast.shouldHaveText('Email já cadastrado para outro usuário.')
+            signupPage.go()
+            signupPage.form(user)
+            signupPage.submit()
+            signupPage.toast.shouldHaveText('Email já cadastrado para outro usuário.')
 
+        })
+    })
+
+    context('quando o email é incorreto', function () {
+        const user = {
+            name: 'Elizabeth Olsen',
+            email: 'liza.yahoo.com',
+            password: 'pwd123'
+        }
+
+        it('deve exibir mensagem de alerta', function () {
+            signupPage.go()
+            signupPage.form(user)
+            signupPage.submit()
+            signupPage.alert.haveText('Informe um email válido')
         })
     })
 
@@ -68,7 +70,7 @@ describe('Cadastro', function () {
         const passwords = ['1', '2a', '123', '1234', '54321']
 
         beforeEach(function () {
-            SignupPage.go()
+            signupPage.go()
         })
 
         passwords.forEach(function (p) {
@@ -80,18 +82,18 @@ describe('Cadastro', function () {
                     password: p
                 }
 
-                SignupPage.form(user)
-                SignupPage.submit()
+                signupPage.form(user)
+                signupPage.submit()
             })
         })
 
         afterEach(function () {
-            SignupPage.alertHaveText('Pelo menos 6 caracteres')
+            signupPage.alert.haveText('Pelo menos 6 caracteres')
         })
 
     })
 
-    context('quando não preencho nenhum dos campos', function(){
+    context('quando não preencho nenhum dos campos', function () {
 
         const alertMessages = [
             'Nome é obrigatório',
@@ -99,14 +101,14 @@ describe('Cadastro', function () {
             'Senha é obrigatória'
         ]
 
-        before(function(){
-            SignupPage.go()
-            SignupPage.submit()
+        before(function () {
+            signupPage.go()
+            signupPage.submit()
         })
 
-        alertMessages.forEach(function(alert){
-            it('deve exibir ' + alert.toLowerCase(), function(){
-                SignupPage.alertHaveText(alert)
+        alertMessages.forEach(function (alert) {
+            it('deve exibir ' + alert.toLowerCase(), function () {
+                signupPage.alert.haveText(alert)
             })
         })
 
