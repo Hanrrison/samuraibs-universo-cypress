@@ -49,7 +49,7 @@ module.exports = defineConfig({
     baseUrl: 'http://localhost:3000',
     viewportWidth: 1440,
     viewportHeight: 900
-
+    //apiServer: 'http://localhost:3333'
     //nao consegui fazer funcionar, conforme aula 3 de git
   },
 });
