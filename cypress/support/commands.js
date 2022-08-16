@@ -27,6 +27,16 @@
 import moment from 'moment'
 
 //import { apiServer } from '../../cypress.config.js'
+import loginPage from './pages/login'
+import dashPage from './pages/dash'
+
+// App Actions
+Cypress.Commands.add('uiLogin', function(user){
+    loginPage.go()
+    loginPage.form(user)
+    loginPage.submit()
+    dashPage.header.userLoggedIn(user.name)
+})
 
 Cypress.Commands.add('postUser', function (user) {
     cy.task('removeUser', user.email)
@@ -127,3 +137,4 @@ Cypress.Commands.add('apiLogin', function (user) {
         Cypress.env('apiToken', response.body.token)
     })
 })
+
